@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Estado de Expedientes – Central de Esterilización HNASS</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --azul:       #1A4F9C;
+    --azul-dark:  #0E3270;
+    --azul-mid:   #2563B0;
+    --azul-light: #D6E4F7;
+    --azul-pale:  #EAF1FB;
+    --verde:      #16A34A;
+    --verde-bg:   #DCFCE7;
+    --amarillo:   #CA8A04;
+    --amarillo-bg:#FEF9C3;
+    --rojo:       #DC2626;
+    --rojo-bg:    #FEE2E2;
+    --texto:      #1E293B;
+    --texto-2:    #475569;
+    --borde:      #CBD5E1;
+    --blanco:     #FFFFFF;
+    --gris-bg:    #F1F5F9;
+  }
+
+  html, body {
+    width: 1920px; height: 1080px;
+    overflow: hidden;
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--gris-bg);
+    color: var(--texto);
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  /* ── LAYOUT PRINCIPAL ── */
+  .slide {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    height: 1080px;
+    gap: 0;
+  }
+
+  /* ── ENCABEZADO ── */
+  header {
+    background: linear-gradient(135deg, var(--azul-dark) 0%, var(--azul) 60%, var(--azul-mid) 100%);
+    padding: 18px 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    right: -80px; top: -80px;
+    width: 300px; height: 300px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 50%;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    right: 60px; bottom: -60px;
+    width: 200px; height: 200px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 50%;
+  }
+
+  .header-left { display: flex; align-items: center; gap: 20px; }
+
+  .logo-shield {
+    width: 54px; height: 54px;
+    background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+  }
+
+  .header-text { color: #fff; }
+  .header-text .unit-tag {
+    font-size: 10px; font-weight: 600; letter-spacing: 2px;
+    text-transform: uppercase; color: rgba(255,255,255,0.65);
+    margin-bottom: 3px;
+  }
+  .header-text h1 {
+    font-size: 19px; font-weight: 700; line-height: 1.2;
+    letter-spacing: -0.3px;
+  }
+  .header-text h1 span { color: #93C5FD; }
+  .header-text .sub {
+    font-size: 11.5px; font-weight: 400; color: rgba(255,255,255,0.72);
+    margin-top: 3px;
+  }
+
+  .header-right { display: flex; align-items: center; gap: 14px; position: relative; z-index: 1; }
+
+  .date-card {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 10px;
+    padding: 10px 16px;
+    text-align: center;
+    color: #fff;
+    backdrop-filter: blur(8px);
+  }
+  .date-card .dot-row {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    margin-bottom: 3px;
+  }
+  .date-dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: #4ADE80;
+    box-shadow: 0 0 6px #4ADE80;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.5;} }
+  .date-card .dc-label { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,.6); }
+  .date-card .dc-date { font-size: 15px; font-weight: 700; }
+
+  /* ── CUERPO PRINCIPAL ── */
+  .body {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 14px;
+    padding: 14px 28px 10px;
+    background: var(--gris-bg);
+  }
+
+  /* ── FILA KPI con semáforo integrado ── */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    gap: 14px;
+  }
+
+  /* KPI normal */
+  .kpi-card {
+    background: var(--blanco);
+    border-radius: 14px;
+    padding: 14px 18px;
+    display: flex; align-items: center; gap: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.07);
+    border: 1px solid rgba(203,213,225,.6);
+    animation: fadeUp .45s ease both;
+  }
+  .kpi-card:nth-child(1){animation-delay:.05s}
+  .kpi-card:nth-child(2){animation-delay:.10s}
+  .kpi-card:nth-child(3){animation-delay:.15s}
+  .kpi-card:nth-child(4){animation-delay:.20s}
+  .kpi-card:nth-child(5){animation-delay:.25s}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+
+  /* Semáforo integrado en KPI: círculo a la izquierda */
+  .kpi-sem {
+    background: var(--blanco);
+    border-radius: 14px;
+    padding: 10px 16px;
+    display: flex; align-items: center; gap: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.07);
+    border: 2px solid;
+    animation: fadeUp .45s ease both;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-sem::after {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 5px;
+    border-radius: 14px 0 0 14px;
+  }
+  .kpi-sem.ks-azul  { border-color: var(--azul-light); }
+  .kpi-sem.ks-azul::after  { background: var(--azul); }
+  .kpi-sem.ks-verde { border-color: #86EFAC; }
+  .kpi-sem.ks-verde::after { background: var(--verde); }
+  .kpi-sem.ks-amarillo { border-color: #FDE047; }
+  .kpi-sem.ks-amarillo::after { background: #EAB308; }
+  .kpi-sem.ks-rojo  { border-color: #FCA5A5; }
+  .kpi-sem.ks-rojo::after  { background: var(--rojo); }
+  .kpi-sem.ks-naranja { border-color: #FCD34D; }
+  .kpi-sem.ks-naranja::after { background: #F59E0B; }
+
+  .sem-dot {
+    width: 56px; height: 56px; border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 3px 12px rgba(0,0,0,.15);
+  }
+  .sem-dot.sd-azul    { background: var(--azul); }
+  .sem-dot.sd-verde   { background: var(--verde); }
+  .sem-dot.sd-amarillo{ background: #EAB308; }
+  .sem-dot.sd-rojo    { background: var(--rojo); }
+  .sem-dot.sd-naranja { background: #F59E0B; }
+  .sem-dot .sd-n   { font-size: 24px; font-weight: 800; color: #fff; line-height: 1; }
+  .sem-dot .sd-pct { font-size: 9px; font-weight: 600; color: rgba(255,255,255,.85); margin-top: 1px; }
+
+  .kpi-icon {
+    width: 50px; height: 50px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .kpi-icon.total   { background: var(--azul-light); }
+
+  .kpi-data { flex: 1; }
+  .kpi-data .num {
+    font-size: 30px; font-weight: 800; line-height: 1;
+    letter-spacing: -1px; color: var(--azul);
+  }
+  .kpi-data .lbl { font-size: 10.5px; font-weight: 600; color: var(--texto-2); text-transform: uppercase; letter-spacing: .5px; margin-top: 3px; }
+  .kpi-data .pct {
+    display: inline-block; margin-top: 5px;
+    font-size: 10.5px; font-weight: 600; padding: 2px 8px;
+    border-radius: 20px; background: var(--azul-light); color: var(--azul);
+  }
+
+  .ksem-data { flex: 1; }
+  .ksem-data .num { font-size: 30px; font-weight: 800; line-height: 1; letter-spacing: -1px; }
+  .ksem-data .lbl { font-size: 10.5px; font-weight: 600; color: var(--texto-2); text-transform: uppercase; letter-spacing: .4px; margin-top: 3px; }
+  .ksem-data .sub { font-size: 9.5px; color: var(--texto-2); margin-top: 2px; }
+  .ksem-data .pct { display: inline-block; margin-top: 5px; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+
+  .ks-verde   .ksem-data .num { color: var(--verde); }
+  .ks-verde   .ksem-data .pct { background: var(--verde-bg); color: #166534; }
+  .ks-amarillo .ksem-data .num { color: #CA8A04; }
+  .ks-amarillo .ksem-data .pct { background: var(--amarillo-bg); color: #713F12; }
+  .ks-rojo    .ksem-data .num { color: var(--rojo); }
+  .ks-rojo    .ksem-data .pct { background: var(--rojo-bg); color: #991B1B; }
+  .ks-naranja .ksem-data .num { color: #D97706; }
+  .ks-naranja .ksem-data .pct { background: #FEF3C7; color: #92400E; }
+
+  /* ── FILA INFERIOR: tabla + gráfico ── */
+  .bottom-row {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 14px;
+    min-height: 0;
+  }
+
+  .card {
+    background: var(--blanco);
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.07);
+    border: 1px solid rgba(203,213,225,.6);
+  }
+  .card-header {
+    padding: 11px 18px 9px;
+    border-bottom: 1px solid var(--borde);
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--azul-dark);
+    display: flex; align-items: center; gap: 7px;
+    flex-shrink: 0;
+  }
+  .card-header::before {
+    content: '';
+    display: inline-block;
+    width: 3px; height: 14px;
+    background: var(--azul);
+    border-radius: 2px;
+  }
+
+  /* GRÁFICO BARRAS HORIZONTALES */
+  .chart-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 13px; }
+
+  .bar-item {}
+  .bar-meta { display: flex; justify-content: space-between; margin-bottom: 5px; }
+  .bar-meta .bar-lbl { font-size: 10.5px; font-weight: 600; color: var(--texto); }
+  .bar-meta .bar-val { font-size: 10.5px; font-weight: 700; color: var(--texto-2); white-space: nowrap; margin-left: 8px; }
+  .bar-track { background: #E2E8F0; border-radius: 6px; height: 12px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 6px; transition: width 1s cubic-bezier(.4,0,.2,1); }
+  .bar-fill.f-azul    { background: linear-gradient(90deg, var(--azul-mid), #60A5FA); }
+  .bar-fill.f-amarillo{ background: linear-gradient(90deg, #EAB308, #FDE047); }
+  .bar-fill.f-rojo    { background: linear-gradient(90deg, var(--rojo), #F87171); }
+  .bar-fill.f-naranja { background: linear-gradient(90deg, #EA580C, #FB923C); }
+  .bar-fill.f-verde   { background: linear-gradient(90deg, var(--verde), #4ADE80); }
+
+  /* ── TABLA ── */
+  .card-tabla { display: flex; flex-direction: column; min-height: 0; }
+  .table-wrap { flex: 1; overflow: hidden; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11.5px;
+  }
+  thead th {
+    background: var(--azul-pale);
+    color: var(--azul-dark);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    font-size: 10px;
+    padding: 9px 14px;
+    text-align: left;
+    border-bottom: 2px solid var(--azul-light);
+  }
+  tbody tr { border-bottom: 1px solid #F1F5F9; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--azul-pale); }
+  tbody td { padding: 8px 14px; vertical-align: middle; }
+  .td-n   { width: 34px; font-weight: 700; color: var(--azul); text-align: center; }
+  .td-req { line-height: 1.45; }
+  .td-req .req-main { font-weight: 500; color: var(--texto); display: block; font-size: 11px; }
+  .table-subtitle {
+    padding: 6px 18px 5px;
+    font-size: 10.5px; font-style: italic;
+    color: var(--azul-dark); font-weight: 500;
+    border-bottom: 1px solid var(--azul-light);
+    background: var(--azul-pale);
+    flex-shrink: 0;
+  }
+  .td-exp { font-family: 'Courier New', monospace; font-size: 10px; color: var(--texto-2); white-space: nowrap; }
+  .td-est { white-space: nowrap; }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .3px;
+  }
+  .badge::before {
+    content: '';
+    width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+  }
+  .badge.tramite   { background: var(--amarillo-bg); color: #854D0E; }
+  .badge.tramite::before { background: #EAB308; }
+  .badge.devuelto  { background: var(--rojo-bg); color: #991B1B; }
+  .badge.devuelto::before{ background: var(--rojo); }
+  .badge.observado { background: #FEF3C7; color: #92400E; }
+  .badge.observado::before { background: #F59E0B; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: linear-gradient(135deg, #1E3A6E, #1A4F9C);
+    padding: 10px 28px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .footer-icon {
+    width: 30px; height: 30px; background: rgba(255,255,255,.15);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0;
+  }
+  footer p {
+    color: rgba(255,255,255,.88);
+    font-size: 11.5px; line-height: 1.5;
+  }
+  footer p strong { color: #fff; }
+  .footer-right {
+    margin-left: auto;
+    text-align: right;
+    color: rgba(255,255,255,.5);
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <!-- ═══════════ ENCABEZADO ═══════════ -->
+  <header>
+    <div class="header-left">
+      <div class="logo-shield">🏥</div>
+      <div class="header-text">
+        <div class="unit-tag">EsSalud · HNASS · Unidad de Mantenimiento de Equipos</div>
+        <h1>Estado de Expedientes de Requerimientos de Repuestos<br>
+            <span>Central de Esterilización</span></h1>
+        <div class="sub">Hospital Nacional Alberto Sabogal Sologuren – Red Prestacional Sabogal</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="date-card">
+        <div class="dot-row">
+          <div class="date-dot"></div>
+          <span class="dc-label">Corte de información</span>
+        </div>
+        <div class="dc-date">28/06/2026</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════ CUERPO ═══════════ -->
+  <div class="body">
+
+    <!-- ── FILA KPI con semáforo integrado ── -->
+    <div class="kpi-row">
+
+      <!-- Total (ícono) -->
+      <div class="kpi-card">
+        <div class="kpi-icon total">📋</div>
+        <div class="kpi-data">
+          <div class="num">14</div>
+          <div class="lbl">Total Expedientes</div>
+          <span class="pct">100%</span>
+        </div>
+      </div>
+
+      <!-- Atendidos -->
+      <div class="kpi-sem ks-verde">
+        <div class="sem-dot sd-verde">
+          <span class="sd-n">0</span>
+          <span class="sd-pct">0%</span>
+        </div>
+        <div class="ksem-data">
+          <div class="num">0</div>
+          <div class="lbl">Atendidos</div>
+          <div class="sub">Orden de compra emitida</div>
+          <span class="pct">0.0%</span>
+        </div>
+      </div>
+
+      <!-- En Trámite -->
+      <div class="kpi-sem ks-amarillo">
+        <div class="sem-dot sd-amarillo">
+          <span class="sd-n">8</span>
+          <span class="sd-pct">57%</span>
+        </div>
+        <div class="ksem-data">
+          <div class="num">8</div>
+          <div class="lbl">En Trámite</div>
+          <div class="sub">Pendientes de atención</div>
+          <span class="pct">57.1%</span>
+        </div>
+      </div>
+
+      <!-- Devueltos -->
+      <div class="kpi-sem ks-rojo">
+        <div class="sem-dot sd-rojo">
+          <span class="sd-n">5</span>
+          <span class="sd-pct">36%</span>
+        </div>
+        <div class="ksem-data">
+          <div class="num">5</div>
+          <div class="lbl">Devueltos</div>
+          <div class="sub">Sin presupuesto OGYD-RPS</div>
+          <span class="pct">35.7%</span>
+        </div>
+      </div>
+
+      <!-- Observado -->
+      <div class="kpi-sem ks-naranja">
+        <div class="sem-dot sd-naranja">
+          <span class="sd-n">1</span>
+          <span class="sd-pct">7%</span>
+        </div>
+        <div class="ksem-data">
+          <div class="num">1</div>
+          <div class="lbl">Observado</div>
+          <div class="sub">Derivado por error de área</div>
+          <span class="pct">7.1%</span>
+        </div>
+      </div>
+
+    </div><!-- /kpi-row -->
+
+    <!-- ── FILA INFERIOR ── -->
+    <div class="bottom-row">
+
+      <!-- TABLA -->
+      <div class="card card-tabla">
+        <div class="card-header">Detalle de Expedientes – Central de Esterilización</div>
+        <div class="table-subtitle">Expedientes priorizados para seguimiento por la Unidad de Mantenimiento de Equipos.</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th class="td-n">N°</th>
+                <th>Requerimiento</th>
+                <th>N° Expediente</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="td-n">1</td>
+                <td class="td-req"><span class="req-main">Solicitud de Anticipo para el Requerimiento Urgente de Adquisición de Repuestos para un Equipo Esterilizador con Generador Eléctrico de Vapor de Dos Puertas (500-600 Lt), Marca: ESTERILIZA – Central de Esterilización HNASS</span></td>
+                <td class="td-exp">0101520260000230</td>
+                <td class="td-est"><span class="badge observado">Observado</span></td>
+              </tr>
+              <tr>
+                <td class="td-n">2</td>
+                <td class="td-req"><span class="req-main">Requerimiento de Adquisición de Repuestos para una Máquina Secadora de Corrugados para el Servicio de Central de Esterilización del HNASS</span></td>
+                <td class="td-exp">0101520250000299</td>
+                <td class="td-est"><span class="badge devuelto">Devuelto</span></td>
+              </tr>
+              <tr>
+                <td class="td-n">3</td>
+                <td class="td-req"><span class="req-main">Adquisición de Repuestos para Equipo Lavador Desinfector del Servicio de Central de Esterilización del HNASS de la Red Prestacional Sabogal</span></td>
+                <td class="td-exp">0101520250000293</td>
+                <td class="td-est"><span class="badge devuelto">Devuelto</span></td>
+              </tr>
+              <tr>
+                <td class="td-n">4</td>
+                <td class="td-req"><span class="req-main">Requerimiento de Adquisición de Repuestos para un Equipo Esterilizador con Generador Eléctrico de 1,000 Lt, Marca: BMT – Central de Esterilización HNASS (Expediente 2025)</span></td>
+                <td class="td-exp">0101520250000298</td>
+                <td class="td-est"><span class="badge devuelto">Devuelto</span></td>
+              </tr>
+              <tr>
+                <td class="td-n">5</td>
+                <td class="td-req"><span class="req-main">Requerimiento de Servicio de Mantenimiento Preventivo y Soluciones de Fallas Imprevistas para el Equipo Esterilizador a Baja Temperatura con Óxido de Etileno del HNASS – Red Prestacional Sabogal (36 meses)</span></td>
+                <td class="td-exp">0092020240000312</td>
+                <td class="td-est"><span class="badge devuelto">Devuelto</span></td>
+              </tr>
+              <tr>
+                <td class="td-n">6</td>
+                <td class="td-req"><span class="req-main">Requerimiento de Compra de Repuestos para el Lavador Desinfector, Marca: TUTTNAUER, Código Patrimonial: 03002751 – Servicio de Central de Esterilización del HNASS</span></td>
+                <td class="td-exp">0092020250000581</td>
+                <td class="td-est"><span class="badge tramite">En Trámite</span></td>
+              </tr>
+              <tr>
+                <td class="td-n">7</td>
+                <td class="td-req"><span class="req-main">Adquisición de Repuestos para los Equipos Selladores para Mangas Mixtas – Servicio de Central de Esterilización del HNASS (con validación de cotizaciones en Programación)</span></td>
+                <td class="td-exp">0101520250000297</td>
+                <td class="td-est"><span class="badge tramite">En Trámite</span></td>
+              </tr>
+              <tr>
+                <td class="td-n">8</td>
+                <td class="td-req"><span class="req-main">Contratación del Servicio de Mantenimiento Correctivo para el Equipo Esterilizador a Baja Temperatura con Óxido de Etileno, Marca: 3M STERI-VAC, Cód. Patrimonial: 01058494 – HNASS, Red Prestacional Sabogal</span></td>
+                <td class="td-exp">0101520260000179</td>
+                <td class="td-est"><span class="badge tramite">En Trámite</span></td>
+              </tr>
+              <tr>
+                <td class="td-n">9</td>
+                <td class="td-req"><span class="req-main">Solicitud de Adquisición de Sal Industrial en Granos (Sal en Pastillas) para los Sistemas de Ablandamiento de Agua de 05 Equipos de Ósmosis Inversa – Central de Esterilización HNASS, Período 06 Meses</span></td>
+                <td class="td-exp">0101520260000108</td>
+                <td class="td-est"><span class="badge tramite">En Trámite</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- GRÁFICO -->
+      <div class="card" style="display:flex;flex-direction:column;">
+        <div class="card-header">Distribución por Estado</div>
+        <div class="chart-body">
+
+          <div class="bar-item">
+            <div class="bar-meta">
+              <span class="bar-lbl">En Trámite</span>
+              <span class="bar-val">8 · 57.1%</span>
+            </div>
+            <div class="bar-track"><div class="bar-fill f-amarillo" style="width:0%" data-w="57.1%"></div></div>
+          </div>
+
+          <div class="bar-item">
+            <div class="bar-meta">
+              <span class="bar-lbl">Devueltos – Sin presupuesto</span>
+              <span class="bar-val">5 · 35.7%</span>
+            </div>
+            <div class="bar-track"><div class="bar-fill f-rojo" style="width:0%" data-w="35.7%"></div></div>
+          </div>
+
+          <div class="bar-item">
+            <div class="bar-meta">
+              <span class="bar-lbl">Observado – Error de derivación</span>
+              <span class="bar-val">1 · 7.1%</span>
+            </div>
+            <div class="bar-track"><div class="bar-fill f-naranja" style="width:0%" data-w="7.1%"></div></div>
+          </div>
+
+          <div class="bar-item">
+            <div class="bar-meta">
+              <span class="bar-lbl">Atendidos</span>
+              <span class="bar-val">0 · 0%</span>
+            </div>
+            <div class="bar-track"><div class="bar-fill f-verde" style="width:0%" data-w="0%"></div></div>
+          </div>
+
+          <!-- Leyenda visual -->
+          <div style="margin-top:18px; border-top:1px solid var(--borde); padding-top:14px;">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--texto-2);margin-bottom:10px;">Detalle por motivo</div>
+
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div style="width:10px;height:10px;border-radius:50%;background:#EAB308;flex-shrink:0;"></div>
+                <span style="font-size:10.5px;color:var(--texto);">Pdte. respuesta presupuestal OGYD-RPS</span>
+                <span style="margin-left:auto;font-weight:700;font-size:10.5px;color:var(--texto-2);">4</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div style="width:10px;height:10px;border-radius:50%;background:#EAB308;flex-shrink:0;opacity:.6"></div>
+                <span style="font-size:10.5px;color:var(--texto);">En Programación (validación / estudio)</span>
+                <span style="margin-left:auto;font-weight:700;font-size:10.5px;color:var(--texto-2);">3</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div style="width:10px;height:10px;border-radius:50%;background:#EAB308;flex-shrink:0;opacity:.4"></div>
+                <span style="font-size:10.5px;color:var(--texto);">En trámite en OIHYSG-RPS</span>
+                <span style="margin-left:auto;font-weight:700;font-size:10.5px;color:var(--texto-2);">1</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div style="width:10px;height:10px;border-radius:50%;background:var(--rojo);flex-shrink:0;"></div>
+                <span style="font-size:10.5px;color:var(--texto);">Devueltos sin presupuesto OGYD-RPS</span>
+                <span style="margin-left:auto;font-weight:700;font-size:10.5px;color:var(--texto-2);">5</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div style="width:10px;height:10px;border-radius:50%;background:#F59E0B;flex-shrink:0;"></div>
+                <span style="font-size:10.5px;color:var(--texto);">Observado por error de derivación</span>
+                <span style="margin-left:auto;font-weight:700;font-size:10.5px;color:var(--texto-2);">1</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /bottom-row -->
+
+  </div><!-- /body -->
+
+  <!-- ═══════════ FOOTER / CONCLUSIÓN ═══════════ -->
+  <footer>
+    <div class="footer-icon">💡</div>
+    <p>
+      <strong>Conclusión Ejecutiva —</strong>
+      Al <strong>28 de junio de 2026</strong>, de los <strong>14 expedientes</strong> registrados,
+      <strong>8 (57.1%)</strong> se encuentran en trámite activo y <strong>6 (42.9%)</strong> han sido devueltos u observados
+      principalmente por restricciones presupuestales de la OGYD-RPS.
+      Se recomienda gestionar con carácter de urgencia la asignación presupuestal
+      para garantizar el abastecimiento oportuno de repuestos de la Central de Esterilización.
+    </p>
+    <div class="footer-right">
+      Unidad de Mantenimiento de Equipos<br>HNASS – EsSalud · Jun 2026
+    </div>
+  </footer>
+
+</div><!-- /slide -->
+
+<script>
+  // Animate bars on load
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.querySelectorAll('.bar-fill[data-w]').forEach((el, i) => {
+        setTimeout(() => {
+          el.style.width = el.dataset.w;
+        }, i * 120);
+      });
+    }, 300);
+  });
+</script>
+</body>
+</html>
