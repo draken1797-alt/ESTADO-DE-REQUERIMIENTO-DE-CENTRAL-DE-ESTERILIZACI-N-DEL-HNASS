@@ -283,7 +283,10 @@
 
   /* ── TABLA ── */
   .card-tabla { display: flex; flex-direction: column; min-height: 0; }
-  .table-wrap { flex: 1; overflow: hidden; }
+  .table-wrap { flex: 1; overflow-y: auto; }
+  .table-wrap::-webkit-scrollbar { width: 5px; }
+  .table-wrap::-webkit-scrollbar-track { background: transparent; }
+  .table-wrap::-webkit-scrollbar-thumb { background: var(--azul-light); border-radius: 10px; }
 
   table {
     width: 100%;
@@ -530,6 +533,36 @@
                 <td class="td-req"><span class="req-main">Solicitud de Adquisición de Sal Industrial en Granos (Sal en Pastillas) para los Sistemas de Ablandamiento de Agua de 05 Equipos de Ósmosis Inversa – Central de Esterilización HNASS, Período 06 Meses</span></td>
                 <td class="td-exp">0101520260000108</td>
                 <td class="td-est"><span class="badge tramite">En Trámite</span></td>
+              </tr>
+              <tr>
+                <td class="td-n">10</td>
+                <td class="td-req"><span class="req-main">Requerimiento de Adquisición de Repuestos para un Equipo Esterilizador con Generador Eléctrico de 1,000 Lt, Marca: BMT – Central de Esterilización HNASS (Expediente 2025 – Exp. adicional)</span></td>
+                <td class="td-exp">0101520250000290</td>
+                <td class="td-est"><span class="badge tramite">En Trámite</span></td>
+              </tr>
+              <tr>
+                <td class="td-n">11</td>
+                <td class="td-req"><span class="req-main">Requerimiento de Adquisición de Repuestos para un Equipo Esterilizador con Generador Eléctrico de 1,000 Lt, Marca: BMT – Central de Esterilización HNASS (Expediente 2025 – Exp. 572)</span></td>
+                <td class="td-exp">0092020250000572</td>
+                <td class="td-est"><span class="badge tramite">En Trámite</span></td>
+              </tr>
+              <tr>
+                <td class="td-n">12</td>
+                <td class="td-req"><span class="req-main">Requerimiento de Adquisición de Repuestos para un Equipo Esterilizador con Generador Eléctrico de 1,000 Lt, Marca: BMT – Dos Puertas (1,000 Lt) – Central de Esterilización HNASS</span></td>
+                <td class="td-exp">0101520260000231</td>
+                <td class="td-est"><span class="badge tramite">En Trámite</span></td>
+              </tr>
+              <tr>
+                <td class="td-n">13</td>
+                <td class="td-req"><span class="req-main">Requerimiento Anual de Repuestos para Equipo Esterilizador con Generador Eléctrico de 600 Lt, Marca: ESTERILIZA – Servicio de Central de Esterilización del HNASS</span></td>
+                <td class="td-exp">0101520260000172</td>
+                <td class="td-est"><span class="badge tramite">En Trámite</span></td>
+              </tr>
+              <tr>
+                <td class="td-n">14</td>
+                <td class="td-req"><span class="req-main">Requerimiento de Adquisición de Repuestos para un Equipo Esterilizador con Generador Eléctrico de 1,000 Lt, Marca: BMT – Central de Esterilización HNASS (Expediente 2025 – Exp. 171)</span></td>
+                <td class="td-exp">0101520260000171</td>
+                <td class="td-est"><span class="badge devuelto">Devuelto</span></td>
               </tr>
             </tbody>
           </table>
